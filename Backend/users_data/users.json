@@ -1,0 +1,12 @@
+[
+    {
+      "id": 1,
+      "email": "scott@test.com",
+      "password": "Scott123",
+      "fullName": "Scott",
+      "dateOfBirth": "2000-12-15",
+      "gender": "male",
+      "country": "UK",
+      "receiveNewsLetters": true
+    }
+  ]
