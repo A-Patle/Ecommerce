@@ -63,7 +63,12 @@ app
         "utf-8"
       );
       const users = JSON.parse(data);
-      res.status(200).json(users);
+      const { email, password } = req.query;
+      let userFound = users.filter(
+        (user) => user.email === email && user.password === password
+      );
+
+      res.status(200).json(userFound);
     } catch (err) {
       console.error("Failed to load users:", err);
       res.status(500).json({ error: "Unable to load users" });
@@ -78,7 +83,7 @@ app
         fullName,
         country,
         reciveNewsLetters,
-        DateOfBirth,
+        dateOfBirth,
       } = req.body;
 
       if (
@@ -87,11 +92,11 @@ app
         !gender ||
         !fullName ||
         !country ||
-        !DateOfBirth
+        !dateOfBirth
       ) {
         return res.status(400).json({
           error:
-            "Missing required fields (email, password, gender, fullName, country, reciveNewsLetters, DateOfBirth)",
+            "Missing required fields (email, password, gender, fullName, country, reciveNewsLetters, dateOfBirth)",
         });
       }
 
@@ -106,7 +111,7 @@ app
         fullName,
         country,
         reciveNewsLetters,
-        DateOfBirth,
+        dateOfBirth,
       };
 
       users.push(newUser);
@@ -152,6 +157,8 @@ app.route("/categories").get(async (req, res) => {
   }
 });
 
+const ordersFilePath = path.join(__dirname, "./users_data/orders.json");
+
 app.route("/orders").get(async (req, res) => {
   try {
     const data = await fs.readFile(
@@ -159,13 +166,99 @@ app.route("/orders").get(async (req, res) => {
       "utf-8"
     );
     const orders = JSON.parse(data);
-    res.status(200).json(orders);
+    const { userid } = req.query;
+    let userOrders = orders.filter((order) => order.userId == userid);
+    res.status(200).json(userOrders);
   } catch (err) {
     console.error("Failed to load orders:", err);
     res.status(500).json({ error: "Unable to load orders" });
   }
 });
 
-app.listen(port, () => {
-  console.log(`server running at port ${port}`);
+app
+  .route("/orders/:id")
+  .get(async (req, res) => {
+    try {
+      const data = await fs.readFile(
+        path.join(__dirname, "./users_data/orders.json"),
+        "utf-8"
+      );
+      const orders = JSON.parse(data);
+      const orderId = req.params.id;
+
+      const order = orders.find((order) => order.id == orderId);
+
+      if (order) {
+        res.status(200).json(order);
+      } else {
+        res.status(404).json({ error: "Order not found" });
+      }
+    } catch (err) {
+      console.error("Failed to get order by id:", err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  })
+  .put(async (req, res) => {
+    try {
+      const data = await fs.readFile(
+        path.join(__dirname, "./users_data/orders.json"),
+        "utf-8"
+      );
+      const orders = JSON.parse(data);
+      const reqBody = req.body;
+      const orderId = req.params.id;
+
+      let orderIndex = orders.findIndex((order) => order.id == orderId);
+
+      if (orderIndex !== -1) {
+        orders[orderIndex] = reqBody;
+      } else {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      await fs.writeFile(
+        ordersFilePath,
+        JSON.stringify(orders, null, 2),
+        "utf-8"
+      );
+
+      res.status(200).json({ ok: true, updatedOrder: orders[orderIndex] });
+    } catch (err) {
+      console.error("Failed to place your orders:", err);
+      res.status(500).json({ error: "Unable to load orders" });
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      const data = await fs.readFile(
+        path.join(__dirname, "./users_data/orders.json"),
+        "utf-8"
+      );
+      const orders = JSON.parse(data);
+      // const reqBody = req.body;
+      const orderId = req.params.id;
+
+      let orderIndex = orders.findIndex((order) => order.id == orderId);
+
+      if (orderIndex !== -1) {
+        orders.splice(orderIndex, 1);
+      } else {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      await fs.writeFile(
+        ordersFilePath,
+        JSON.stringify(orders, null, 2),
+        "utf-8"
+      );
+
+      res.status(200).json({ ok: true, updatedOrder: orders[orderIndex] });
+    } catch (err) {
+      console.error("Failed to place your orders:", err);
+      res.status(500).json({ error: "Unable to load orders" });
+    }
+  });
+
+app.listen(3000, () => {
+  console.log(`server running at port ${3000}`);
 });

@@ -1,0 +1,4 @@
+{
+  "ignore": ["users_data/brands.json","users_data/categories.json","users_data/orders.json","users_data/products.json","users_data/usres.json"],
+  "watch": ["app.js"]
+}

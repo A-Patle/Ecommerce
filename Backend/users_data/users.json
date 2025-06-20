@@ -1,12 +1,22 @@
 [
-    {
-      "id": 1,
-      "email": "scott@test.com",
-      "password": "Scott123",
-      "fullName": "Scott",
-      "dateOfBirth": "2000-12-15",
-      "gender": "male",
-      "country": "UK",
-      "receiveNewsLetters": true
-    }
-  ]
+  {
+    "id": 1,
+    "email": "scott@test.com",
+    "password": "Scott123",
+    "fullName": "Scott",
+    "dateOfBirth": "2000-12-15",
+    "gender": "male",
+    "country": "UK",
+    "receiveNewsLetters": true
+  },
+  {
+    "id": 2,
+    "email": "test@test.com",
+    "password": "Test123",
+    "gender": "male",
+    "fullName": "test",
+    "country": "2",
+    "reciveNewsLetters": "",
+    "dateOfBirth": "2002-12-22"
+  }
+]
