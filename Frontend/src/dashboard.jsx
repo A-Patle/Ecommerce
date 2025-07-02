@@ -20,7 +20,7 @@ export default function Dashboard() {
 
   //get context
   let userContext = useContext(UserContext);
-  console.log(userContext);
+  // console.log(userContext);
 
   //load data from db function that fetches data from 'orders' api
   const loadDataFromDatabase = useCallback(async () => {
@@ -45,7 +45,7 @@ export default function Dashboard() {
           );
         });
 
-        console.log(ordersResponseBody);
+        // console.log(ordersResponseBody);
 
         setOrders(ordersResponseBody);
       }
@@ -79,7 +79,7 @@ export default function Dashboard() {
         });
         let orderResponseBody = await orderResponse.json();
         if (orderResponseBody.ok) {
-          console.log("orderResponseBody", orderResponseBody);
+          // console.log("orderResponseBody", orderResponseBody);
           loadDataFromDatabase();
           setShowOrderPlacedAlert(true);
         }

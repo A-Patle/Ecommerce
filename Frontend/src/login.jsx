@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { UserContext } from "./userContext";
 import { useNavigate } from "react-router-dom";
 
 export function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("scott@test.com");
-  const [password, setPassword] = useState("Scott123");
+  const [email, setEmail] = useState("admin@test.com");
+  const [password, setPassword] = useState("Admin123");
   const userContextData = useContext(UserContext);
+  let myEmailRef = useRef();
 
   const [dirty, setDirty] = useState({
     email: false,
@@ -55,6 +56,7 @@ export function Login() {
   useEffect(() => {
     //ex:- load data from database
     document.title = "Login-eCommerce";
+    myEmailRef.current.focus();
   }, []);
   //validate method to do validation
   let validate = () => {
@@ -96,7 +98,7 @@ export function Login() {
   };
 
   let onLoginClick = async () => {
-    console.log("login clicked");
+    // console.log("login clicked");
     //set all properties as dirty
     let dirtyData = dirty;
     Object.keys(dirty).forEach((control) => {
@@ -115,16 +117,29 @@ export function Login() {
       });
       if (response.ok) {
         let resBody = await response.json();
+        //set global state using context
         if (resBody.length > 0) {
-          //set glbal satte using context
-          userContextData.setUser({
-            ...userContextData.user,
-            isLoggedIn: true,
-            currentUserId: resBody[0].id,
-            currentUserName: resBody[0].fullName,
+          userContextData.dispatch({
+            type: "somework",
+            payload: { x: 10, y: 20 },
           });
-          //redirecting to dashboard url
-          navigate("/dashboard");
+          userContextData.dispatch({
+            type: "login",
+            payload: {
+              currentUserId: resBody[0].id,
+              currentUserName: resBody[0].fullName,
+              currentUserRole: resBody[0].role,
+            },
+          });
+
+          //redirect to relavent page based on user role
+          if (resBody[0].role === "user") {
+            //redirect to dashboard url
+            navigate("/dashboard");
+          } else {
+            //redirect to products url
+            navigate("/products");
+          }
         } else {
           setMessage(<span className="text-danger">Logined Failed</span>);
         }
@@ -177,6 +192,7 @@ export function Login() {
                   setDirty({ ...dirty, [event.target.name]: true });
                   validate();
                 }}
+                ref={myEmailRef}
               />
               <div className="text-danger">
                 {dirty["email"] && errors["email"][0] ? errors["email"] : ""}

@@ -5,19 +5,16 @@ import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   let navigate = useNavigate();
+
   //get context
   const userContext = useContext(UserContext);
-  console.log(userContext);
+  // console.log(userContext);
 
+  //when the user clicks on loggout button
   let onLogoutClick = (event) => {
     event.preventDefault();
 
-    userContext.setUser({
-      ...userContext.user,
-      isLoggedIn: false,
-      currentUserId: null,
-      currentUserName: null,
-    });
+    userContext.dispatch({ type: "logout" });
     navigate("/");
   };
 
@@ -40,7 +37,8 @@ export default function Navbar() {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            {userContext.user.isLoggedIn ? (
+            {userContext.user.isLoggedIn &&
+            userContext.user.currentUserRole === "user" ? (
               <li className="nav-item">
                 <NavLink
                   className="nav-link"
@@ -49,6 +47,38 @@ export default function Navbar() {
                   activeclassname="active"
                 >
                   <i className="fa fa-dashboard"></i>Dashboard
+                </NavLink>
+              </li>
+            ) : (
+              ""
+            )}
+
+            {userContext.user.isLoggedIn &&
+            userContext.user.currentUserRole === "user" ? (
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  aria-current="page"
+                  to="/store"
+                  activeclassname="active"
+                >
+                  <i className="fa fa-shopping-bag"></i>Store
+                </NavLink>
+              </li>
+            ) : (
+              ""
+            )}
+
+            {userContext.user.isLoggedIn &&
+            userContext.user.currentUserRole === "admin" ? (
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  aria-current="page"
+                  to="/products"
+                  activeclassname="active"
+                >
+                  <i className="fa fa-suitcase"></i>Products
                 </NavLink>
               </li>
             ) : (

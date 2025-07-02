@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./userContext";
 
 export default function Register() {
   const navigate = useNavigate();
   const userContextData = useContext(UserContext);
+  const myEmailRef = useRef();
 
   const [state, setState] = useState({
     email: "",
@@ -132,18 +133,20 @@ export default function Register() {
     if (isValid()) {
       let response = await fetch("/users", {
         method: "POST",
-        body: JSON.stringify(state),
+        body: JSON.stringify({ ...state, role: "user" }),
         headers: {
           "Content-type": "application/json",
         },
       });
       if (response.ok) {
         let resBody = await response.json();
-        userContextData.setUser({
-          ...userContextData.user,
-          isLoggedIn: true,
-          currentUserId: resBody.user.id,
-          currentUserName: resBody.user.fullName,
+        userContextData.dispatch({
+          type: "login",
+          payload: {
+            currentUserId: resBody.user.id,
+            currentUserName: resBody.user.fullName,
+            currentUserRole: resBody.user.role,
+          },
         });
         setMessage(
           <span className="text-success">Successfully Registered</span>
@@ -155,7 +158,7 @@ export default function Register() {
         );
       }
       // let result = response.json()
-      console.log(response);
+      // console.log(response);
     } else {
       setMessage(<span className="text-danger">Errors</span>);
     }
@@ -180,10 +183,11 @@ export default function Register() {
   useEffect(() => {
     //ex:- load data from database
     document.title = "Register-eCommerce";
+    myEmailRef.current.focus();
   }, []);
 
   useEffect(() => {
-    console.log(state.email);
+    // console.log(state.email);
   }, [state.email]);
 
   return (
@@ -232,6 +236,7 @@ export default function Register() {
                       setDirty({ ...dirty, [event.target.name]: true });
                       validate();
                     }}
+                    ref={myEmailRef}
                   />
                   <div className="text-danger">
                     {dirty["email"] && errors["email"][0]

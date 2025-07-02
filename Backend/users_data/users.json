@@ -7,7 +7,8 @@
     "dateOfBirth": "2000-12-15",
     "gender": "male",
     "country": "UK",
-    "receiveNewsLetters": true
+    "receiveNewsLetters": true,
+    "role": "user"
   },
   {
     "id": 2,
@@ -17,6 +18,29 @@
     "fullName": "test",
     "country": "2",
     "reciveNewsLetters": "",
-    "dateOfBirth": "2002-12-22"
+    "dateOfBirth": "2002-12-22",
+    "role": "user"
+  },
+  {
+    "id": 2,
+    "email": "admin@test.com",
+    "password": "Admin123",
+    "gender": "male",
+    "fullName": "Admin",
+    "country": "2",
+    "reciveNewsLetters": true,
+    "dateOfBirth": "2002-12-22",
+    "role": "admin"
+  },
+  {
+    "id": 3,
+    "email": "akashPatle@test.com",
+    "password": "Akash123",
+    "gender": "male",
+    "fullName": "Akash patle",
+    "country": "1",
+    "reciveNewsLetters": "",
+    "dateOfBirth": "1997-03-22",
+    "role": "user"
   }
 ]

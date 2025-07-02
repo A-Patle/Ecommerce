@@ -1,19 +1,22 @@
 [
-    { "id": 1, "brandName": "Apple" },
-    {
-      "id": 2,
-      "brandName": "Sony"
-    },
-    {
-      "id": 3,
-      "brandName": "Samsung"
-    },
-    {
-      "id": 4,
-      "brandName": "Carrier"
-    },
-    {
-      "id": 5,
-      "brandName": "Dell"
-    }
-  ]
+  {
+    "id": 1,
+    "brandName": "Apple"
+  },
+  {
+    "id": 2,
+    "brandName": "Sony"
+  },
+  {
+    "id": 3,
+    "brandName": "Samsung"
+  },
+  {
+    "id": 4,
+    "brandName": "Carrier"
+  },
+  {
+    "id": 5,
+    "brandName": "Dell"
+  }
+]

@@ -4,14 +4,14 @@
     "userId": 1,
     "productId": 1,
     "quantity": 2,
-    "isPaymentCompleted": false
+    "isPaymentCompleted": true
   },
   {
     "id": 2,
     "userId": 1,
     "productId": 3,
     "quantity": 12,
-    "isPaymentCompleted": false
+    "isPaymentCompleted": true
   },
   {
     "id": 3,
@@ -19,5 +19,12 @@
     "productId": 4,
     "quantity": 1,
     "isPaymentCompleted": true
+  },
+  {
+    "id": 4,
+    "userId": 1,
+    "productId": 1,
+    "quantity": 1,
+    "isPaymentCompleted": false
   }
 ]

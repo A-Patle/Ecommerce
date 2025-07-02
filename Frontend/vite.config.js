@@ -11,6 +11,8 @@ export default defineConfig({
       "/customers": "http://localhost:3000",
       "/orders": "http://localhost:3000",
       "/orders/:id": "http://localhost:3000",
+      "/brands": "http://localhost:3000",
+      "/categories": "http://localhost:3000",
     },
   },
 });

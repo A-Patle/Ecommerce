@@ -19,7 +19,37 @@ app.get("/products", async (req, res) => {
       path.join(__dirname, "./users_data/products.json"),
       "utf-8"
     );
-    const products = JSON.parse(data);
+    let products = JSON.parse(data);
+
+    const { productName_like, _sort, _order } = req.query;
+
+    if (productName_like) {
+      const search = productName_like.toLowerCase();
+      products = products.filter((product) =>
+        product.productName.toLowerCase().includes(search)
+      );
+    }
+
+    if (_sort && _order) {
+      products.sort((a, b) => {
+        let valA = a[_sort];
+        let valB = b[_sort];
+
+        // If values are strings, compare case-insensitively
+        if (typeof valA === "string" && typeof valB === "string") {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+        }
+
+        if (_order === "ASC") {
+          return valA > valB ? 1 : valA < valB ? -1 : 0;
+        } else if (_order === "DESC") {
+          return valA < valB ? 1 : valA > valB ? -1 : 0;
+        }
+        return 0;
+      });
+    }
+
     res.status(200).json(products);
   } catch (err) {
     console.error("Failed to load products:", err);
@@ -84,6 +114,7 @@ app
         country,
         reciveNewsLetters,
         dateOfBirth,
+        role,
       } = req.body;
 
       if (
@@ -92,11 +123,12 @@ app
         !gender ||
         !fullName ||
         !country ||
-        !dateOfBirth
+        !dateOfBirth ||
+        !role
       ) {
         return res.status(400).json({
           error:
-            "Missing required fields (email, password, gender, fullName, country, reciveNewsLetters, dateOfBirth)",
+            "Missing required fields (email, password, gender, fullName, country, reciveNewsLetters, dateOfBirth, role)",
         });
       }
 
@@ -112,6 +144,7 @@ app
         country,
         reciveNewsLetters,
         dateOfBirth,
+        role,
       };
 
       users.push(newUser);
@@ -159,22 +192,56 @@ app.route("/categories").get(async (req, res) => {
 
 const ordersFilePath = path.join(__dirname, "./users_data/orders.json");
 
-app.route("/orders").get(async (req, res) => {
-  try {
-    const data = await fs.readFile(
-      path.join(__dirname, "./users_data/orders.json"),
-      "utf-8"
-    );
-    const orders = JSON.parse(data);
-    const { userid } = req.query;
-    let userOrders = orders.filter((order) => order.userId == userid);
-    res.status(200).json(userOrders);
-  } catch (err) {
-    console.error("Failed to load orders:", err);
-    res.status(500).json({ error: "Unable to load orders" });
-  }
-});
+app
+  .route("/orders")
+  .get(async (req, res) => {
+    try {
+      const data = await fs.readFile(ordersFilePath, "utf-8");
+      const orders = JSON.parse(data);
+      const { userid } = req.query;
+      let userOrders = orders.filter((order) => order.userId == userid);
+      res.status(200).json(userOrders);
+    } catch (err) {
+      console.error("Failed to load orders:", err);
+      res.status(500).json({ error: "Unable to load orders" });
+    }
+  })
+  .post(async (req, res) => {
+    try {
+      const { userId, productId, quantity, isPaymentCompleted } = req.body;
 
+      if (!userId || !productId || !quantity || isPaymentCompleted === null) {
+        return res.status(400).json({
+          error:
+            "Missing required fields (userId, productId, quantity, isPaymentCompleted)",
+        });
+      }
+
+      const ordersData = await fs.readFile(ordersFilePath, "utf-8");
+      const order = JSON.parse(ordersData);
+
+      const newOrder = {
+        id: order.length ? order[order.length - 1].id + 1 : 1,
+        userId,
+        productId,
+        quantity,
+        isPaymentCompleted,
+      };
+
+      order.push(newOrder);
+
+      await fs.writeFile(
+        ordersFilePath,
+        JSON.stringify(order, null, 2),
+        "utf-8"
+      );
+
+      res.status(201).json({ message: "order added", order: newOrder });
+    } catch (error) {
+      console.error("Failed to add order:", error);
+      res.status(500).json({ error: "Failed to add order" });
+    }
+  });
 app
   .route("/orders/:id")
   .get(async (req, res) => {
